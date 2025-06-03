@@ -27,7 +27,8 @@
 			</div>
 		</header>
 
-		<main class="gallery"></main>
+		<main class="gallery">
+		</main>
 	</div>
 
 	<div class="modal" id="modal-container">
@@ -39,10 +40,12 @@
 		</div>
 	</div>
 
-	<div class="modal modal_active">
+	<!-- <div class="modal modal_active"> -->
+	<div class="modal">
 		<div class="modal__container">
 			<button class="modal__close" aria-label="закрыть"></button>
 			<div class="modal__content">
+
 				<div class="card card_full">
 					<img class="card__image" src="<%=require('../images/Subtract.svg')%>" alt="" />
 					<div class="card__column">
@@ -55,14 +58,16 @@
 						</div>
 					</div>
 				</div>
+				
 			</div>
 		</div>
-	</div>
+	</div> 
 
 	<div class="modal">
 		<div class="modal__container">
 			<button class="modal__close" aria-label="закрыть"></button>
 			<div class="modal__content">
+
 				<div class="basket">
 					<h2 class="modal__title">Корзина</h2>
 					<ul class="basket__list">
@@ -98,6 +103,7 @@
 		<div class="modal__container">
 			<button class="modal__close" aria-label="закрыть"></button>
 			<div class="modal__content">
+
 				<form class="form">
 					<div class="order">
 						<div class="order__field">
@@ -124,6 +130,7 @@
 		<div class="modal__container">
 			<button class="modal__close" aria-label="закрыть"></button>
 			<div class="modal__content">
+
 				<form class="form">
 					<div class="order">
 						<label class="order__field">
@@ -147,6 +154,7 @@
 		<div class="modal__container">
 			<button class="modal__close" aria-label="закрыть"></button>
 			<div class="modal__content">
+				
 				<div class="order-success">
 					<h2 class="film__title">Заказ оформлен</h2>
 					<p class="film__description">Списано 153 250 синапсов</p>
