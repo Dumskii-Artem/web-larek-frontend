@@ -16,10 +16,8 @@ export interface IItem {
     image: string;
     price: number | null;
     title: string;
-    in_basket: boolean;
+    inBasket: boolean;
 }
-
-//export type TItemInBasket = Pick<IItem, 'price' | 'title'>;
 
 export interface IShowcase {
     items: IItem[];
@@ -34,7 +32,7 @@ export interface IBasket {
     getTotal(): number;
     getCount(): number;
     removeItem(itemId: string): void;
-    checkTotal(value: number): boolean;
+ //   checkTotal(value: number): boolean;
 }
 
 export type TPaymentType = 'card' | 'cash' | null
@@ -47,11 +45,8 @@ export interface IOrderData {
 }
 
 export interface IOrder extends IOrderData {
-    id: string;
     clear(): void;
     getOrderData(): IOrderData;
-    checkOrderData( od : IOrderData) : boolean;
-    setOrderData( od: IOrderData): void;
 }
 
 export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE' | 'PATCH';
@@ -68,7 +63,3 @@ export interface IOrderResponse {
   error?: string;
   code?: number;
 }
-
-// export interface ICardsContainer {
-//     catalog: HTMLElement[];
-// }

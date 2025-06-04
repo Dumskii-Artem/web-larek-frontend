@@ -24,7 +24,7 @@ export class AppPage extends Component<IPageData> {
         this.basketButton = ensureElement<HTMLElement>('.header__basket');
 
         this.basketButton.addEventListener('click', () => {
-            this.events.emit('open basket');
+            this.events.emit('page: openBasket');
         });
     }
 
@@ -38,7 +38,6 @@ export class AppPage extends Component<IPageData> {
 
     // Блокирует или разблокирует прокрутку страницы (например, при открытии модального окна)
     set scrollLocked(isLocked: boolean) {
-        console.log(isLocked);
         this.pageWrapper.classList.toggle('page__wrapper_locked', isLocked)
     }
 }

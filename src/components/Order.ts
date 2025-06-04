@@ -35,6 +35,62 @@ export class Order implements IOrder {
     get email():string {return this._email};
     get payment():TPaymentType {return this._payment};
 
+    validateOrderForm( msg: string) {
+        console.log( 'VALIDATE_orderForm: ', msg, );
+        console.log(`проверяем значения: _paymentMethod=${this._payment} address="${this._address}"`)
+
+     	let valid = true;
+     	let message = '';
+
+     	if (!this._address) {
+    		valid = false;
+    		message = 'Введите адрес доставки.';
+    	} 
+
+        if (!this._payment) {
+    		valid = false;
+    		message += (message ? ' ': '') +'Выберите способ оплаты.';
+    	}
+
+        this.events.emit(
+            'order: orderForm NewData',
+             {
+                address: this._address,
+                payment: this._payment,
+                valid: valid,
+                errors: message
+            }
+        );
+    }
+
+    validateContactForm(msg: string) {
+        console.log( 'VALIDATE_orderForm: ', msg, );
+        console.log(`проверяем значения: email=${this._email} phone="${this._phone}"`)
+
+     	let valid = true;
+     	let message = '';
+
+
+     	if (!this._email) {
+    		valid = false;
+    		message = 'Введите таки свою почту.';
+    	} 
+
+     	if (!this._phone) {
+    		valid = false;
+    		message += (message ? ' ': '') +'Дай телефончик!';
+    	} 
+
+        this.events.emit(
+            'order: contactsForm NewData',
+             {
+                email: this._email,
+                phone: this._phone,
+                valid: valid,
+                errors: message
+            }
+        );
+    }
 
     setFieldData<T extends keyof IOrderData>(field: T, value: IOrderData[T]) {
         console.log('setFieldData', field, value);
@@ -64,20 +120,4 @@ export class Order implements IOrder {
             phone: this._phone,
         };
     }
-
-    setOrderData( od: IOrderData) {
-        this._address = od.address;
-        this._email = od.email;
-        this._payment = od.payment;
-        this.phone = od.phone;
-    }
-
-    checkOrderData( od : IOrderData) {
-        return (this._address === od.address)
-            && (this._email === od.email)
-            && (this._payment === od.payment)
-            && (this._phone === od.phone)
-    }
-
-
 }

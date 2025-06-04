@@ -19,7 +19,7 @@ export class SuccessView extends Component<ISuccessContent> {
         this._button = this.container.querySelector('.order-success__close');
 
         this._button.addEventListener('click', () => {
-            this.events.emit('success: submit');
+            this.events.emit('successView: submit');
         });
     }
 

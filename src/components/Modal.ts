@@ -32,14 +32,14 @@ export class Modal <IModalContent> extends Component<IModalContent> {
     open() {
         this.container.classList.add("modal_active");
         document.addEventListener("keyup", this.handleEscUp);
-        this.events.emit('modal: opened');
+        this.events.emit('modal: page.scrollLocked', { lock: true });
     }
   
     close() {
         this.container.classList.remove("modal_active");
         document.removeEventListener("keyup", this.handleEscUp);
     	this.modalContent.replaceChildren();
-        this.events.emit('modal: closed', this);
+        this.events.emit('modal: page.scrollLocked', { lock: false });
     }
   
     handleEscUp (evt: KeyboardEvent) {

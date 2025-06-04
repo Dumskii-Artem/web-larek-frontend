@@ -24,7 +24,6 @@ export class Basket implements IBasket {
             return;
         }
         this._items.push(item);
-        this.events.emit('basket: changed');
     };
 
     removeItem(itemId: string) {
@@ -33,7 +32,6 @@ export class Basket implements IBasket {
             return;
         }
         this._items = this._items.filter(item => item.id !== itemId);
-        this.events.emit('basket: changed');
     }
 
     alreadyInBasket(itemId: string) {
@@ -42,7 +40,6 @@ export class Basket implements IBasket {
 
     clear() {
         this._items = [];
-        this.events.emit('basket: changed');
     }
 
     getTotal() {
@@ -51,9 +48,5 @@ export class Basket implements IBasket {
 
     getCount() {
         return this._items.length;
-    }
-
-    checkTotal(value: number) {
-        return this.getTotal() === value; 
     }
 }

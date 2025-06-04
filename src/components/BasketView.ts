@@ -9,7 +9,6 @@ export interface IBasketContent {
 }
 
 export class BasketView <IBasketContent> extends Component<IBasketContent> {
-   // protected events: IEvents;
     protected _content: HTMLElement;
 
     protected _listContainer: HTMLElement;
@@ -18,15 +17,13 @@ export class BasketView <IBasketContent> extends Component<IBasketContent> {
 
     constructor(container: HTMLElement, protected events: IEvents) {
         super(container);
-       // this.events = events;
 
         this._listContainer = this.container.querySelector('.basket__list');
 	    this._priceContainer = this.container.querySelector('.basket__price');
 	    this._orderButton = this.container.querySelector('.basket__button');
 
         this._orderButton.addEventListener('click', () => {
-            console.log('нажали кнопку Оформить в корзине.')
-			this.events.emit('basket: open_order');
+			this.events.emit('basketView: showOrderForm');
 		});
     }
    

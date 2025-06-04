@@ -69,7 +69,7 @@ export class CardView extends Component<IItem>  {
         }
     }
 
-    set in_basket( value: boolean)
+    set inBasket( value: boolean)
     {
         if(this._toBasketButton) {
             this.changeDisabledState(this._toBasketButton, value);
@@ -86,11 +86,10 @@ export class CardPreview extends CardView {
         this._description = this.container.querySelector('.card__text');
         this._toBasketButton = this.container.querySelector('.card__button');
         
-        this.in_basket = false;
+        this.inBasket = false;
 
         this._toBasketButton.addEventListener('click', () => {
-	        this.events.emit('view: move_to_basket', { itemID: this._itemID });
-            this.events.emit('modal: close');
+	        this.events.emit('CardPreview: move_item_to_basket', { itemID: this._itemID });
         });
     }
 }
@@ -104,7 +103,7 @@ export class CardBasket extends CardView {
         this.itemDelete = this.container.querySelector('.basket__item-delete');
 
         this.itemDelete.addEventListener('click', () =>
-	        this.events.emit('view: delete_from_basket', { itemID: this._itemID })
+	        this.events.emit('CardBasket: delete_from_basket', { itemID: this._itemID })
 	    );
     };
 }
@@ -117,7 +116,7 @@ export class CardShowcase extends CardView {
 
         
         this.container.addEventListener('click', () =>
-	        this.events.emit('card: show_preview', { itemID: this._itemID })
+	        this.events.emit('CardShowcase: show_preview', { itemID: this._itemID })
 	    );
     };
 }

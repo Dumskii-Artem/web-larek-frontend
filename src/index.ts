@@ -6,6 +6,7 @@ import { Basket } from './components/Basket';
 import { BasketView } from './components/BasketView';
 import { CardBasket, CardPreview, CardShowcase } from './components/CardView';
 import { ContactsFormView } from './components/ContactsFormView';
+import { IFormState } from './components/FormView';
 import { Modal } from './components/Modal';
 import { Order } from './components/Order';
 import { OrderFormView } from './components/OrderFormView';
@@ -44,18 +45,64 @@ const basketContainerTemplate: HTMLTemplateElement = document.querySelector('#ba
 const successContainerTemplate: HTMLTemplateElement = document.querySelector('#success');
 
 const basketView = new BasketView( cloneTemplate(basketContainerTemplate), events);
-const orderFormView = new OrderFormView( cloneTemplate(formOrderTemplate), events, 'orderForm')
-const contactsFormView = new ContactsFormView( cloneTemplate(formContactsTemplate), events, 'contactsForm')
+const orderFormView = new OrderFormView( cloneTemplate(formOrderTemplate), events)
+const contactsFormView = new ContactsFormView( cloneTemplate(formContactsTemplate), events)
 
 
 const successView = new SuccessView(cloneTemplate(successContainerTemplate), events);
 
-events.on('success: submit', () => {
-	basket.clear()
-	modal.close();
+function showBasket() {
+	const items = basket.items.map((item, index) => {
+		const card = new CardBasket( cloneTemplate(cardBasketTemplate), events);
+		return card.render({
+			...item,
+			itemIndex: index + 1
+		});
+	});
+
+	modal.content = basketView.render({
+			items: items,
+			total: basket.getTotal()
+		});
+}
+
+// Получаем ништяки с сервера
+getShowcase();
+
+function getShowcase() {
+	api.getShowcase()
+		.then((items) => {
+			showcase.items = items;
+			const itemsArray = showcase.items.map((item, index)=> {
+					const cardView = new CardShowcase( cloneTemplate(cardCatalogTemplate), events);
+					return cardView.render(item);
+			});
+
+			// ////////////////////////////////////////////////////////////////////
+			//basket.addItem(showcase.getItem('854cef69-976d-4c2a-a18c-2aa45046c390'));
+
+			page.render({ basketCount: basket.getCount(), galleryItems : itemsArray });		
+		})
+		.catch((err) => {
+			console.error('Ошибка при получении ништяков:', err);
+		});
+	}
+
+
+// **************************** Наши событиия ***************************** //
+
+// новые данные для contactsForm из order
+events.on('order: contactsForm NewData', (data: Partial<IOrderData> & IFormState) => {
+	contactsFormView.render( data);
 });
 
-events.on('contactsForm: submit', () => {
+// новые данные для orderForm из order
+events.on('order: orderForm NewData', (data: Partial<IOrderData> & IFormState) => {
+	orderFormView.render( data);
+});
+
+// нажата кнопка Оплатить в contactsForm
+events.on('formView: contactsForm.submit', () => {
 	successView.total = 0;
 	api.postOrder(order.getOrderData(), basket.items, basket.getTotal())
 		.then((data) => {
@@ -70,87 +117,48 @@ events.on('contactsForm: submit', () => {
 
 });
 
-
-events.on('orderForm: submit', () => {
-console.log('открываем модалку', order.getOrderData());	
-	contactsFormView.email = order.email;
-	contactsFormView.phone = order.phone;
-console.log('загрузили данные в contactView:', order.getOrderData());
-	modal.content = contactsFormView.render();
-	modal.open();
+// нажата кнопка Далее в orderForm
+events.on('formView: orderForm.submit', () => {
+	modal.content = contactsFormView.render();	
+	order.validateContactForm('SSS')
 });
 
-events.on('basket: open_order', () => {
-console.log('открываем модалку', order.getOrderData());
-	orderFormView.address = order.address;
-	orderFormView.payment = order.payment;
-console.log('загрузили данные в orderView:', order.getOrderData());
+// нажата кнопка Оформить в корзине
+events.on('basketView: showOrderForm', () => {
 	modal.content = orderFormView.render();
-	modal.open();
+	order.validateOrderForm('ZZZ')
+//	modal.open();
 });
 
-events.on('view: delete_from_basket', ({ itemID }: { itemID: string }) => {
-	basket.removeItem(itemID);
-	events.emit('basket: changed');
-	events.emit('open basket'); // перерисовываем
+// изменен адрес (formView) или способ оплаты (orderFormView) в orderForm
+events.on('formView: orderForm.change', (data: { field: keyof IOrderData; value: string }) => {
+	order.setFieldData(data.field, data.value);
+	order.validateOrderForm( '***')
 });
 
-events.on('basket: changed', () => {
-	page.basketCount = basket.getCount();
+// изменен телефон или email в contactsForm
+events.on('formView: contactsForm.change', (data: { field: keyof IOrderData; value: string }) => {
+	order.setFieldData(data.field, data.value);
+	order.validateContactForm( '+++')
 });
 
-events.on('open basket', () => {
-	const items = basket.items.map((item, index) => {
-		const card = new CardBasket( cloneTemplate(cardBasketTemplate), events);
-		return card.render({
-			...item,
-			itemIndex: index + 1
-		});
-	});
-
-	basketView.items = items;
-	basketView.total = basket.getTotal();
-
-	modal.content = basketView.render();
-	modal.open();
-});
-
-
-// Получаем ништяки с сервера
-api.getShowcase()
-    .then((items) => {
-        showcase.items = items;
-		events.emit('initialData:loaded');
-    })
-    .catch((err) => {
-        console.error('Ошибка при получении ништяков:', err);
-    });
-
-events.on('initialData:loaded', () => {
-	const itemsArray = showcase.items.map((item, index)=> {
-            const cardView = new CardShowcase( cloneTemplate(cardCatalogTemplate), events);
-            return cardView.render(item);
-    });
-
-	// ////////////////////////////////////////////////////////////////////
-//	basket.addItem(showcase.getItem('854cef69-976d-4c2a-a18c-2aa45046c390'));
-
-	page.render({ basketCount: basket.getCount(), galleryItems : itemsArray });
-});
-
-// Блокировка прокрутки при открытии/закрытии модалки
-events.on('modal: opened', () => {
-	page.scrollLocked = true;
-});
-
-events.on('modal: closed', (obj) => {
-	console.log('MODAL CLOSED',obj);
-	page.scrollLocked = false;
-});
-
-events.on('card: show_preview', ({ itemID }: { itemID: string }) => {
+// нажата кнопка В корзину в предпросмотре карточки
+events.on('CardPreview: move_item_to_basket', ({ itemID }: { itemID: string }) => {
 	const item = showcase.getItem(itemID);
-	item.in_basket = basket.alreadyInBasket(item.id);
+	basket.addItem(item);
+	page.basketCount = basket.getCount();
+	modal.close();
+});
+
+// блокировка/разблокировка прокрутки при открытии/закрытии модалки
+events.on('modal: page.scrollLocked', ({ lock }: { lock: boolean }) => {
+	page.scrollLocked = lock;
+});
+
+// кликнули по карточке на витрине
+events.on('CardShowcase: show_preview', ({ itemID }: { itemID: string }) => {
+	const item = showcase.getItem(itemID);
+	item.inBasket = basket.alreadyInBasket(item.id);
 	modal.content = new CardPreview(
 		cloneTemplate(cardPreviewTemplate), 
 		events
@@ -158,39 +166,22 @@ events.on('card: show_preview', ({ itemID }: { itemID: string }) => {
 	modal.open();
 });
 
-events.on('modal: close', () => {
-	console.log('close', modal);
+// нажали изображение корзины на главной странице
+events.on('page: openBasket', () => {
+	showBasket();
+	modal.open();
+});
+
+// нажали кнопку **За новыми покупками** в successView
+events.on('successView: submit', () => {
+	basket.clear()
 	modal.close();
-	events.emit('modal: closed');
+	page.basketCount = basket.getCount();
 });
 
-events.on('view: move_to_basket', ({ itemID }: { itemID: string }) => {
-	const item = showcase.getItem(itemID);
-	basket.addItem(item);
+// в корзинной карточке нажали кнопку удаления
+events.on('CardBasket: delete_from_basket', ({ itemID }: { itemID: string }) => {
+	basket.removeItem(itemID);
+	showBasket();
+	page.basketCount = basket.getCount();
 });
-
-events.on('orderForm: change', (data: { field: keyof IOrderData; value: string }) => {
-	// console.log('-> events.on', data.field, data.value, order.getOrderData());
-	order.setFieldData(data.field, data.value);
-	console.log('-> events.on', data.field, data.value, order.getOrderData())
-	orderFormView.validate('');
-});
-
-events.on('contactsForm: change', (data: { field: keyof IOrderData; value: string }) => {
-	// console.log('-> events.on', data.field, data.value, order.getOrderData());
-	order.setFieldData(data.field, data.value);
-	console.log('-> events.on', data.field, data.value, order.getOrderData())
-	contactsFormView.validate('');
-});
-
-
-
-
-
-
-
-
-// function postOrder(arg0: { address: string; email: string; payment: TPaymentType; phone: string; }, items: IItem[], arg2: number) {
-// 	throw new Error('Function not implemented.');
-// }
-
