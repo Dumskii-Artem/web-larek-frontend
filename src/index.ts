@@ -77,10 +77,6 @@ function getShowcase() {
 					const cardView = new CardShowcase( cloneTemplate(cardCatalogTemplate), events);
 					return cardView.render(item);
 			});
-
-			// ////////////////////////////////////////////////////////////////////
-			//basket.addItem(showcase.getItem('854cef69-976d-4c2a-a18c-2aa45046c390'));
-
 			page.render({ basketCount: basket.getCount(), galleryItems : itemsArray });		
 		})
 		.catch((err) => {
@@ -158,11 +154,12 @@ events.on('modal: page.scrollLocked', ({ lock }: { lock: boolean }) => {
 // кликнули по карточке на витрине
 events.on('CardShowcase: show_preview', ({ itemID }: { itemID: string }) => {
 	const item = showcase.getItem(itemID);
-	item.inBasket = basket.alreadyInBasket(item.id);
 	modal.content = new CardPreview(
 		cloneTemplate(cardPreviewTemplate), 
 		events
-	).render(item);
+	).render({...item,
+		inBasket: basket.alreadyInBasket(item.id)	
+	});
 	modal.open();
 });
 

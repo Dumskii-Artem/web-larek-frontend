@@ -1,9 +1,9 @@
-import { TPaymentType } from "../types";
+import { IOrderData, TPaymentType } from "../types";
 import { ensureElement } from "../utils/utils";
 import { IEvents } from "./base/events";
 import { FormView } from "./FormView";
 
-export class OrderFormView <IOrderData> extends FormView<IOrderData> {
+export class OrderFormView extends FormView<IOrderData> {
     protected _addressInput: HTMLInputElement;
     protected _paymentMethod: TPaymentType = null;
     protected _cashButton: HTMLButtonElement;

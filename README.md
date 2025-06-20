@@ -267,7 +267,7 @@ export class FormView<T> extends Component<Partial<T> & IFormState>
 
 #### Класс ContactsFormView
 
-export class ContactsFormView <IOrderData> extends FormView <IOrderData> {
+export class ContactsFormView extends FormView <IOrderData> {
 
 - `constructor(container: HTMLFormElement, events: IEvents)` - конструктор
 - `set email(value: string)` - сеттер почты
@@ -333,7 +333,7 @@ export class CardShowcase extends CardView
 
 #### Класс OrderFormView
 
-export class OrderFormView <IOrderData> extends FormView<IOrderData> 
+export class OrderFormView extends FormView<IOrderData> 
 
 - `constructor(container: HTMLFormElement, events: IEvents)` -
 - `set address(value: string)` -

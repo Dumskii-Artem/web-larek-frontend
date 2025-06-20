@@ -1,11 +1,11 @@
-import { categoryType, IItem, TItemCategory } from "../types";
+import { categoryType, IItem, TItemCategory, ICardView } from "../types";
 import { CDN_URL } from "../utils/constants";
 import { Component } from "./base/Component";
 import { IEvents } from "./base/events";
 
 
 // IItem - интерфейс для рендера
-export class CardView extends Component<IItem>  {
+export class CardView extends Component<ICardView>  {
     protected events: IEvents;    
 
     protected _itemID: string;

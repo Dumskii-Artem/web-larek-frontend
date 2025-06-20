@@ -16,7 +16,11 @@ export interface IItem {
     image: string;
     price: number | null;
     title: string;
-    inBasket: boolean;
+//    inBasket: boolean;
+}
+
+export interface ICardView extends IItem {
+  inBasket: boolean
 }
 
 export interface IShowcase {

@@ -1,10 +1,9 @@
+import { IOrderData } from "../types";
 import { IEvents } from "./base/events";
 import { FormView } from "./FormView";
 
 
-export class ContactsFormView <IOrderData> extends FormView <IOrderData> {
-// так тоже работает
-//export class ContactsFormView <EMPTY> extends FormView <EMPTY> {
+export class ContactsFormView extends FormView <IOrderData> {
     protected _emailInput: HTMLInputElement;
 	protected _phoneInput: HTMLInputElement;
 
