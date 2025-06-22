@@ -35,4 +35,6 @@ export class BasketView <IBasketContent> extends Component<IBasketContent> {
 		this._priceContainer.textContent = `${price} синапсов`;
         this.changeDisabledState(this._orderButton, price == 0);
 	}
+
+
 }

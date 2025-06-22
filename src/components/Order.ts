@@ -1,8 +1,7 @@
-import { IOrder, IOrderData, TPaymentType} from "../types";
+import { IOrder, IOrderData, IOrderValidation, TPaymentType} from "../types";
 import { IEvents } from "./base/events";
 
 export class Order implements IOrder {
-    protected _id: string;
     protected _address: string;
     protected _email: string;
     protected _payment: TPaymentType = null;
@@ -21,10 +20,6 @@ export class Order implements IOrder {
         this._phone = "";
     }
 
-    set id(value: string) {
-        this._id = value;
-    }
-
     set address(value: string) {this._address = value;};
     set phone(value: string) {this._phone = value;};
     set email(value: string) {this._email = value;};
@@ -35,80 +30,75 @@ export class Order implements IOrder {
     get email():string {return this._email};
     get payment():TPaymentType {return this._payment};
 
-    validateOrderForm( msg: string) {
-        console.log( 'VALIDATE_orderForm: ', msg, );
-        console.log(`проверяем значения: _paymentMethod=${this._payment} address="${this._address}"`)
 
-     	let valid = true;
+    validateAdress(): IOrderValidation {
+        let valid = true;
      	let message = '';
 
-     	if (!this._address) {
+        if (!this._address) {
     		valid = false;
     		message = 'Введите адрес доставки.';
     	} 
 
-        if (!this._payment) {
-    		valid = false;
-    		message += (message ? ' ': '') +'Выберите способ оплаты.';
-    	}
-
-        this.events.emit(
-            'order: orderForm NewData',
-             {
-                address: this._address,
-                payment: this._payment,
-                valid: valid,
-                errors: message
-            }
-        );
+        return {valid, message}
     }
 
-    validateContactForm(msg: string) {
-        console.log( 'VALIDATE_orderForm: ', msg, );
-        console.log(`проверяем значения: email=${this._email} phone="${this._phone}"`)
-
-     	let valid = true;
+    validatePayment(): IOrderValidation {
+        let valid = true;
      	let message = '';
 
+        if (!this._payment) {
+    		valid = false;
+    		message = 'Выберите способ оплаты.';
+    	} 
+
+        return {valid, message}
+    }
+
+    validateMail(): IOrderValidation {
+        let valid = true;
+     	let message = '';
 
      	if (!this._email) {
     		valid = false;
     		message = 'Введите таки свою почту.';
-    	} 
+    	}
+
+        return {valid, message}
+    }
+
+    validatePhone(): IOrderValidation {
+        let valid = true;
+     	let message = '';
 
      	if (!this._phone) {
     		valid = false;
-    		message += (message ? ' ': '') +'Дай телефончик!';
-    	} 
+    		message = 'Дай телефончик!';
+    	}  
 
-        this.events.emit(
-            'order: contactsForm NewData',
-             {
-                email: this._email,
-                phone: this._phone,
-                valid: valid,
-                errors: message
-            }
-        );
+        return {valid, message}
     }
 
     setFieldData<T extends keyof IOrderData>(field: T, value: IOrderData[T]) {
-        console.log('setFieldData', field, value);
         switch (field) {
             case 'address':
                 this.address = value;
+                this.events.emit('Order: new address');
                 break;
             case 'email':
                 this.email = value;
+                this.events.emit('Order: new email');
                 break;
             case 'payment':
-                this.payment = value as TPaymentType;;
+                this.payment = value as TPaymentType;
+                this.events.emit('Order: new payment');
                 break;
             case 'phone':
                 this.phone = value;
+                this.events.emit('Order: new phone');
                 break;
             default:
-                console.warn(`Unknown field: ${field}`);
+                console.warn(`setFieldData: Unknown field: ${field}`);
         }
     }
 

@@ -21,4 +21,8 @@ export class Showcase implements IShowcase {
     getItem(itemId:string) {
          return this._items.find((item) => item.id === itemId)
     }
+
+    getItemPrice(itemId:string) {
+        return this.getItem(itemId).price;
+    }
 }

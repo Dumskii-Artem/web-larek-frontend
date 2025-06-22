@@ -368,6 +368,8 @@ export class AppPage extends Component<IPageData>
 
 ### События, возникающие при взаимодействии пользователя с интерфейсом (генерируются классами, отвечающими за представление)
 
+здесь не всё, пока некогда писать
+
 - `formView: contactsForm.submit` - нажата кнопка **Оплатить** в contactsForm
 - `formView: orderForm.submit` - нажата кнопка **Далее** в orderForm
 - `basketView: showOrderForm` - нажата кнопка **Оформить** в корзине

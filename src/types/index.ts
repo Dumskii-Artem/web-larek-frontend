@@ -1,4 +1,5 @@
 export type TItemCategory = 'софт-скил' | 'хард-скил' | 'другое' | 'кнопка' | 'дополнительное';
+export type TItemPrice = number | null;
 
 export const categoryType: Record<TItemCategory, string> = {
     'софт-скил': 'soft',
@@ -14,18 +15,24 @@ export interface IItem {
     category: TItemCategory;
     description: string;
     image: string;
-    price: number | null;
+    price: TItemPrice;
     title: string;
-//    inBasket: boolean;
 }
 
-export interface ICardView extends IItem {
-  inBasket: boolean
+export interface ICardPreview extends IItem {
+  inBasket: boolean;
+  canAddToBasket: boolean;
 }
 
 export interface IShowcase {
     items: IItem[];
     getItem(itemId:string) : IItem;
+    getItemPrice(itemId:string) : TItemPrice;
+}
+
+export interface IOrderValidation {
+    valid: boolean;
+    message: string;
 }
 
 export interface IBasket {
@@ -36,7 +43,6 @@ export interface IBasket {
     getTotal(): number;
     getCount(): number;
     removeItem(itemId: string): void;
- //   checkTotal(value: number): boolean;
 }
 
 export type TPaymentType = 'card' | 'cash' | null
@@ -46,6 +52,21 @@ export interface IOrderData {
     email: string;
     payment: TPaymentType;
     phone: string;
+}
+
+export interface IValidateData {
+    valid: boolean;
+    errors: string;
+}
+
+export interface IContactsViewData extends IValidateData {
+    email: string;
+    phone: string;
+}
+
+export interface IOrderViewData  extends IValidateData  {
+    address: string;
+    payment: TPaymentType;
 }
 
 export interface IOrder extends IOrderData {

@@ -5,7 +5,6 @@ import { FormView } from "./FormView";
 
 export class OrderFormView extends FormView<IOrderData> {
     protected _addressInput: HTMLInputElement;
-    protected _paymentMethod: TPaymentType = null;
     protected _cashButton: HTMLButtonElement;
     protected _cardButton: HTMLButtonElement;
 
@@ -17,33 +16,37 @@ export class OrderFormView extends FormView<IOrderData> {
         this._cashButton = ensureElement<HTMLButtonElement>('button[name="cash"]', this.container);
 
         this._cardButton.addEventListener('click', () => {
-            this._cashButton.classList.remove('button_alt-active');
-            this._cardButton.classList.add('button_alt-active');
-            this._paymentMethod = 'card';
             this.events.emit(
-                `formView: ${this.formName}.change`,
-                { field: 'payment', value: this._paymentMethod }
-            );
+                'someFormView: change',
+                { field: 'payment', value: 'card'}
+            );            
         });
 
         this._cashButton.addEventListener('click', () => {
-            this._cardButton.classList.remove('button_alt-active');
-            this._cashButton.classList.add('button_alt-active');
-            this._paymentMethod = 'cash';
             this.events.emit(
-                `formView: ${this.formName}.change`,
-                { field: 'payment', value: this._paymentMethod }
+                'someFormView: change',
+                { field: 'payment', value: 'cash'}
             );
         });
     }
 
     set address(value: string) {
-        console.log('orderFormView: address =', value);
         this._addressInput.value = value;
     }
 
     set payment(method: TPaymentType) {
-        console.log('orderFormView: payment =', method);
-        this._paymentMethod = method;
+        switch (method) {
+            case 'card':
+                this._cashButton.classList.remove('button_alt-active');
+                this._cardButton.classList.add('button_alt-active');
+                break;
+            case 'cash':
+                this._cashButton.classList.add('button_alt-active');
+                this._cardButton.classList.remove('button_alt-active');
+                break;
+            default:
+                this._cashButton.classList.remove('button_alt-active');
+                this._cardButton.classList.remove('button_alt-active');
+        }
     }
 }

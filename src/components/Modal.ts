@@ -9,12 +9,14 @@ export interface IModalContent {
 export class Modal <IModalContent> extends Component<IModalContent> {
     protected events: IEvents;
     protected modalContent: HTMLElement;
+  //  protected _basketShown: boolean;
 
     protected closeButton: HTMLButtonElement;
 
     constructor(container: HTMLElement, events: IEvents) {
         super(container);
         this.events = events;
+    //    this._basketShown = false;
 
         this.closeButton = ensureElement<HTMLButtonElement>('.modal__close', container);
         this.closeButton.addEventListener("click", this.close.bind(this));
@@ -48,7 +50,19 @@ export class Modal <IModalContent> extends Component<IModalContent> {
         }
     };
 
-    set content(content: HTMLElement) {
+    protected set content(content: HTMLElement) {
         this.modalContent.replaceChildren(content);
     }
+
+    // basketShow() {
+    //     this._basketShown = true;
+    // }
+
+    // basketHide() {
+    //     this._basketShown = false;
+    // }
+
+    // get basketShown() {
+    //     return this._basketShown;
+    // }
 }

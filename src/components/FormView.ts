@@ -1,15 +1,16 @@
+import { IValidateData } from "../types";
 import { ensureElement } from "../utils/utils";
 import { Component } from "./base/Component";
 import { IEvents } from "./base/events";
 
-// Интерфейс описывает статус формы: валидна ли она и список ошибок
-export interface IFormState {
-    valid?: boolean;
-    errors?: string;
-}
+// // Интерфейс описывает статус формы: валидна ли она и список ошибок
+// export interface IFormState {
+//     valid?: boolean;
+//     errors?: string;
+// }
 
 // Обобщённый класс-обработчик формы
-export class FormView<T> extends Component<Partial<T> & IFormState> {
+export class FormView<T> extends Component<Partial<T> & IValidateData> {
     protected _submitButton: HTMLButtonElement;
     protected _errorContainer: HTMLElement;
     protected formName: string;
@@ -21,9 +22,6 @@ export class FormView<T> extends Component<Partial<T> & IFormState> {
         super(_form);
 
   		this.formName = this._form.getAttribute('name')+'Form';
-
-        console.log('NAME=', this.formName);
-
         this._submitButton = ensureElement<HTMLButtonElement>(
             'button[type=submit]',
             this.container
@@ -43,21 +41,18 @@ export class FormView<T> extends Component<Partial<T> & IFormState> {
         this._form.addEventListener('input', (e: Event) => {
             const input = e.target as HTMLInputElement;
             this.events.emit(
-                `formView: ${this.formName}.change`,
+                'someFormView: change',
                 { field: input.name as keyof T, value: input.value }
             );
+            
         });
-
-
     } 
 
     set valid( value: boolean) {
-        console.log(`${this.formName}: order: поступило новое значение Valid:`, value);
         this._submitButton.disabled = !value;
     }
 
     set errors( message: string) {
-        console.log(`${this.formName}: new errors:`, message);
         this._errorContainer.textContent = message;
     }
 
