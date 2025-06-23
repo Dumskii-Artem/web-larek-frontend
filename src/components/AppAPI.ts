@@ -8,8 +8,17 @@ export class AppApi {
 	}
 
     getShowcase(): Promise<IItem[]> {
-		return this._baseApi.get<{ total: number; items: IItem[] }>(`/product`)
-			.then((response) => response.items);
+	// 	return this._baseApi.get<{ total: number; items: IItem[] }>(`/product`)
+	// 		.then((response) => response.items);
+	// }
+
+		return this._baseApi
+			.get<{ total: number; items: IItem[] }>('/product')
+			.then((response) => response.items)
+			.catch((error) => {
+				console.error('Ошибка при получении товаров:', error);
+				throw new Error('Не удалось загрузить витрину товаров');
+			});
 	}
 
 	getItemById(id: string): Promise<IItem> {
