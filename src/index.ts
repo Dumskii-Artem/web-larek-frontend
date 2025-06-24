@@ -191,6 +191,10 @@ events.on('formView: contactsForm.submit', () => {
 		})
 		.catch((err) => {
 			console.error('Ошибка при отправке заказа:', err);
+			alert('Сервер всё еще не отвечает')
+			successView.total = basket.getTotal();
+			modal.render({content:  successView.render()});
+			modal.open();
 		});	
 
 });
