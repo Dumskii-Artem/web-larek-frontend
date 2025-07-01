@@ -139,10 +139,6 @@ const zzz = {
     ]
 }
 
-getShowcase();
-
-
-
 function getShowcase() {
 	api.getShowcase()
 		.then((items) => {
@@ -339,3 +335,5 @@ events.on('Basket: changed', () => {
 
 	page.basketCount = basket.getCount();
 });
+
+getShowcase();
